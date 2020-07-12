@@ -13,8 +13,25 @@ import gc
 from nltk.corpus import stopwords
 from joblib import Parallel, delayed
 import multiprocessing
+import sys
 
-News = pd.read_csv("/home/lingfengzhang/Code/Sync/MasterThesis/Data/wiki/wiki.csv")
+csv.field_size_limit(sys.maxsize)
+News = pd.read_csv("~/MasterThesis/Data/wiki/wiki.csv", sep=',',engine = 'python',iterator=True)
+loop = True
+chunkSize = 1000
+chunks = []
+index=0
+while loop:
+    try:
+        print(index)
+        chunk = News.get_chunk(chunkSize)
+        chunks.append(chunk)
+        index+=1
+    except StopIteration:
+        loop = False
+        print("Iteration is stopped.")
+print('开始合并')
+News = pd.concat(chunks, ignore_index= True)
 
 
 News['SECTION_TEXT'] = News['SECTION_TEXT'].apply(lambda x: x.lower())
@@ -256,8 +273,9 @@ sentences = Parallel(n_jobs=num_cores)(delayed(majid)(i) for i in X)
 ##########
 #Negation Handling
 ##########
+gc.collect()
 # load dictionary
-filepath = '/home/lingfengzhang/Code/Sync/MasterThesis/Data/dict/dic-wiki.csv'
+filepath = '~/MasterThesis/Data/dict/dic-wiki.csv'
 word_map = {}
 with open(filepath, encoding="utf8") as f:
     for line in f:
@@ -274,7 +292,7 @@ import re
 def replace_negations(sent):
     idx = 0
     indices = []
-    indices = [i for i, x in enumerate(sent) if x == 'not' or x == 'never' or x == 'nor' or x == 'neither']
+    indices = [i for i, x in enumerate(sent) if x in ["not", "nor", "neither", "never"]]
     # print(indices)
     c = 0
     for i in indices:
@@ -301,16 +319,33 @@ from joblib import Parallel, delayed
 import multiprocessing
 
 
-def majid1(X):
-    sentences = replace_negations(X)
-    return sentences
+def majid1(sent):
+    res = []
+    for X in sent:
+        sentences = replace_negations(X)
+        res.append(sentences)
+    return res
 
 
-num_cores = multiprocessing.cpu_count()
-sent2 = Parallel(n_jobs=num_cores)(delayed(majid1)(i) for i in sentences)
+processes = []
+q = multiprocessing.Queue()
+length = len(sentences)
+pool = multiprocessing.Pool(processes=int(num_cores/2))
+'''
+for i,v in [( int(j*(length/num_cores)), int((j+1)*length/num_cores)) for j in range(num_cores)]:
+    sent = sentences[i:v]
+    p = multiprocessing.Process(target=majid2, args=(q, sent))
+    processes.append(p)
+    p.start()
+'''
+sent2 = []
+for i,v in [( int(j*(length/num_cores)), int((j+1)*length/num_cores)) for j in range(num_cores)]:
+    sent = sentences[i:v]
+    sent2 = sent2 + pool.apply_async(majid1, args=(sent,)).get()
+pool.close()
+pool.join()
 
-
-
+print("Done Neg")
 ##########
 #POS
 ##########
@@ -405,14 +440,14 @@ print('Size of Vocabulary=', len(SizeOfVocab))
 print('Done making the Vocabulary')
 
 
-model1.wv.save_word2vec_format('/home/lingfengzhang/Code/Sync/MasterThesis/Model/Wiki-W-CBOW-ALL.bin.gz', binary=True)
-model1.wv.save_word2vec_format('/home/lingfengzhang/Code/Sync/MasterThesis/Model/Wiki-W-CBOW-ALL.txt', binary=False)
-model1.save('/home/lingfengzhang/Code/Sync/MasterThesis/Model/Wiki-W-CBOW-ALL.bin')
+model1.wv.save_word2vec_format('~/MasterThesis/Model/Wiki-W-CBOW-ALL.bin.gz', binary=True)
+model1.wv.save_word2vec_format('~/MasterThesis/Model/Wiki-W-CBOW-ALL.txt', binary=False)
+model1.save('~/MasterThesis/Model/Wiki-W-CBOW-ALL.bin')
 print('Done Saving Model1')
 #####
-model2.wv.save_word2vec_format('/home/lingfengzhang/Code/Sync/MasterThesis/Model/Wiki-W-Skip-ALL.gz', binary=True)
-model2.wv.save_word2vec_format('/home/lingfengzhang/Code/Sync/MasterThesis/Model/Wiki-W-Skip-ALL.txt', binary=False)
-model1.save('/home/lingfengzhang/Code/Sync/MasterThesis/Model/Wiki-W-Skip-ALL.bin')
+model2.wv.save_word2vec_format('~/MasterThesis/Model/Wiki-W-Skip-ALL.gz', binary=True)
+model2.wv.save_word2vec_format('~/MasterThesis/Model/Wiki-W-Skip-ALL.txt', binary=False)
+model1.save('~/MasterThesis/Model/Wiki-W-Skip-ALL.bin')
 print('Done Saving Model2')
 
 # model.save('model2.bin')

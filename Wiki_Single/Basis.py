@@ -11,7 +11,7 @@ import sys
 
 
 csv.field_size_limit(sys.maxsize)
-News = pd.read_csv("/home/lingfengzhang/Code/Sync/MasterThesis/Data/wiki/wiki.csv", sep=',',engine = 'python',iterator=True)
+News = pd.read_csv("~/MasterThesis/Data/wiki/wiki.csv", sep=',',engine = 'python',iterator=True)
 loop = True
 chunkSize = 1000
 chunks = []
@@ -100,14 +100,14 @@ Saving the embeddings and the model
 
 from gensim.models import Word2Vec, KeyedVectors
 
-model1.wv.save_word2vec_format('/home/lingfengzhang/Code/Sync/MasterThesis/Model/Wiki-W-CBOW-Basis.bin.gz', binary=True)
-model1.wv.save_word2vec_format('/home/lingfengzhang/Code/Sync/MasterThesis/Model/Wiki-W-CBOW-Basis.txt', binary=False)
-model1.save('/home/lingfengzhang/Code/Sync/MasterThesis/Model/Wiki-W-CBOW-Basis.bin')
+model1.wv.save_word2vec_format('~/MasterThesis/Model/Wiki-W-CBOW-Basis.bin.gz', binary=True)
+model1.wv.save_word2vec_format('~/MasterThesis/Model/Wiki-W-CBOW-Basis.txt', binary=False)
+model1.save('~/MasterThesis/Model/Wiki-W-CBOW-Basis.bin')
 print('Done Saving Model1')
 #####
-model2.wv.save_word2vec_format('/home/lingfengzhang/Code/Sync/MasterThesis/Model/Wiki-W-Skip-Basis.gz', binary=True)
-model2.wv.save_word2vec_format('/home/lingfengzhang/Code/Sync/MasterThesis/Model/Wiki-W-Skip-Basis.txt', binary=False)
-model2.save('/home/lingfengzhang/Code/Sync/MasterThesis/Model/Wiki-W-Skip-Basis.bin')
+model2.wv.save_word2vec_format('~/MasterThesis/Model/Wiki-W-Skip-Basis.gz', binary=True)
+model2.wv.save_word2vec_format('~/MasterThesis/Model/Wiki-W-Skip-Basis.txt', binary=False)
+model2.save('~/MasterThesis/Model/Wiki-W-Skip-Basis.bin')
 print('Done Saving Model2')
 
 # model.save('model2.bin')

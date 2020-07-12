@@ -12,13 +12,30 @@ import pandas as pd
 import numpy as np
 from sklearn.datasets import load_files
 from collections import Counter
+import sys
 
 """
 Importing Dataset
 
 """
 
-News = pd.read_csv("/home/lingfengzhang/Code/Sync/MasterThesis/Data/wiki/wiki.csv")
+csv.field_size_limit(sys.maxsize)
+News = pd.read_csv("~/MasterThesis/Data/wiki/wiki.csv", sep=',',engine = 'python',iterator=True)
+loop = True
+chunkSize = 1000
+chunks = []
+index=0
+while loop:
+    try:
+        print(index)
+        chunk = News.get_chunk(chunkSize)
+        chunks.append(chunk)
+        index+=1
+    except StopIteration:
+        loop = False
+        print("Iteration is stopped.")
+print('开始合并')
+News = pd.concat(chunks, ignore_index= True)
 
 print('Done Importing')
 
@@ -281,14 +298,14 @@ Saving the embeddings and the model
 
 from gensim.models import Word2Vec, KeyedVectors
 
-model1.wv.save_word2vec_format('/home/lingfengzhang/Code/Sync/MasterThesis/Model/Wiki-W-CBOW-Spell.bin.gz', binary=True)
-model1.wv.save_word2vec_format('/home/lingfengzhang/Code/Sync/MasterThesis/Model/Wiki-W-CBOW-Spell.txt', binary=False)
-model1.save('/home/lingfengzhang/Code/Sync/MasterThesis/Model/Wiki-W-CBOW-Spell.bin')
+model1.wv.save_word2vec_format('~/MasterThesis/Model/Wiki-W-CBOW-Spell.bin.gz', binary=True)
+model1.wv.save_word2vec_format('~/MasterThesis/Model/Wiki-W-CBOW-Spell.txt', binary=False)
+model1.save('~/MasterThesis/Model/Wiki-W-CBOW-Spell.bin')
 print('Done Saving Model1')
 #####
-model2.wv.save_word2vec_format('/home/lingfengzhang/Code/Sync/MasterThesis/Model/Wiki-W-Skip-Spell.gz', binary=True)
-model2.wv.save_word2vec_format('/home/lingfengzhang/Code/Sync/MasterThesis/Model/Wiki-W-Skip-Spell.txt', binary=False)
-model2.save('/home/lingfengzhang/Code/Sync/MasterThesis/Model/Wiki-W-Skip-Spell.bin')
+model2.wv.save_word2vec_format('~/MasterThesis/Model/Wiki-W-Skip-Spell.gz', binary=True)
+model2.wv.save_word2vec_format('~/MasterThesis/Model/Wiki-W-Skip-Spell.txt', binary=False)
+model2.save('~/MasterThesis/Model/Wiki-W-Skip-Spell.bin')
 print('Done Saving Model2')
 
 # model.save('model2.bin')

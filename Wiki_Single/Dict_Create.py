@@ -6,8 +6,25 @@ import nltk
 from nltk.corpus import wordnet
 import re
 import gc
+import sys
 
-News = pd.read_csv("/home/lingfengzhang/Code/Sync/MasterThesis/Data/wiki/wiki.csv")
+csv.field_size_limit(sys.maxsize)
+News = pd.read_csv("~/MasterThesis/Data/wiki/wiki.csv", sep=',',engine = 'python',iterator=True)
+loop = True
+chunkSize = 1000
+chunks = []
+index=0
+while loop:
+    try:
+        print(index)
+        chunk = News.get_chunk(chunkSize)
+        chunks.append(chunk)
+        index+=1
+    except StopIteration:
+        loop = False
+        print("Iteration is stopped.")
+print('开始合并')
+News = pd.concat(chunks, ignore_index= True)
 print('Done Importing')
 text= News['SECTION_TEXT']
 X=text.values.tolist()
@@ -47,7 +64,7 @@ from multiprocessing import Process, freeze_support
 
 
 word_map = {}
-ukWac = '/home/lingfengzhang/Code/Sync/MasterThesis/Data/ukwac/sorted.uk.word.unigrams.csv'
+ukWac = '~/MasterThesis/Data/ukwac/sorted.uk.word.unigrams.csv'
 word_freq = {}
 with open(ukWac, encoding="utf8") as f:
     for line in f:
@@ -122,7 +139,7 @@ for k,v in d.items():
 
 
 #write to dic
-w = csv.writer(open("/home/lingfengzhang/Code/Sync/MasterThesis/Data/dict/dic-wiki.csv", "w",newline='', encoding = 'utf-8'))
+w = csv.writer(open("~/MasterThesis/Data/dict/dic-wiki.csv", "w",newline='', encoding = 'utf-8'))
 for key, val in word_map.items():
     #print(key, val)
     w.writerow([key, val])
