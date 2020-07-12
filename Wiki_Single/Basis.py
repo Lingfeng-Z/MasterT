@@ -59,9 +59,6 @@ def majid(X):
     return words
 
 
-del text
-gc.collect()
-
 X = [[el] for el in X]
 
 from joblib import Parallel, delayed
@@ -70,8 +67,6 @@ import multiprocessing
 num_cores = multiprocessing.cpu_count()
 sentences = Parallel(n_jobs=num_cores)(delayed(majid)(i) for i in X)
 
-del X
-gc.collect()
 
 #########
 
@@ -90,8 +85,6 @@ SizeOfVocab = model2.wv.vocab
 print('Size of Vocabulary=', len(SizeOfVocab))
 print('Done making the Vocabulary')
 
-del sentences
-gc.collect()
 
 """"
 Saving the embeddings and the model

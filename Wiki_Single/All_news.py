@@ -14,6 +14,7 @@ from nltk.corpus import stopwords
 from joblib import Parallel, delayed
 import multiprocessing
 import sys
+import joblib
 
 csv.field_size_limit(sys.maxsize)
 News = pd.read_csv("~/MasterThesis/Data/wiki/wiki.csv", sep=',',engine = 'python',iterator=True)
@@ -345,6 +346,10 @@ for i,v in [( int(j*(length/num_cores)), int((j+1)*length/num_cores)) for j in r
 pool.close()
 pool.join()
 
+del sentences
+del word_map
+gc.collect()
+
 print("Done Neg")
 ##########
 #POS
@@ -376,6 +381,10 @@ def majid2(X):
 num_cores = multiprocessing.cpu_count()
 sent3 = Parallel(n_jobs=num_cores)(delayed(majid2)(i) for i in sent2)
 
+del sent2
+
+gc.collect()
+print("POS Done")
 ##########
 #Stopwords
 ##########
@@ -400,9 +409,19 @@ def majid3(X):
 num_cores = multiprocessing.cpu_count()
 sent4 = Parallel(n_jobs=num_cores)(delayed(majid3)(i) for i in sent3)
 
+del sent3
+del stopwords_list
+gc.collect()
+joblib.dump(sent4, '/home/lingfengzhang/Code/Sync/MasterThesis/Temp/sent4', compress=3)
+print("Sone Stop!")
+
 ##########
 #Stem
 ##########
+gc.collect()
+sent4 = joblib.load('/home/lingfengzhang/Code/Sync/MasterThesis/Temp/sent4')
+
+
 def stemming2(sentences):
     sno = nltk.stem.SnowballStemmer('english')
     # words = sent.split()
@@ -419,6 +438,10 @@ def majid4(X):
 
 num_cores = multiprocessing.cpu_count()
 sent5 = Parallel(n_jobs=num_cores)(delayed(majid4)(i) for i in sent4)
+del sent4
+gc.collect()
+print("Stem Done")
+print("Done All")
 
 ##########
 #Save
