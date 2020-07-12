@@ -268,7 +268,7 @@ def majid(X):
 
 X = [[el] for el in X]
 
-num_cores = multiprocessing.cpu_count()
+num_cores = 8
 sentences = Parallel(n_jobs=num_cores)(delayed(majid)(i) for i in X)
 
 ##########
@@ -378,7 +378,7 @@ def majid2(X):
     gc.collect()
     return review
 
-num_cores = multiprocessing.cpu_count()
+num_cores = 8
 sent3 = Parallel(n_jobs=num_cores)(delayed(majid2)(i) for i in sent2)
 
 del sent2
@@ -406,7 +406,7 @@ def majid3(X):
 
 # X = [[el] for el in X]
 
-num_cores = multiprocessing.cpu_count()
+num_cores = 8
 sent4 = Parallel(n_jobs=num_cores)(delayed(majid3)(i) for i in sent3)
 
 del sent3
@@ -436,7 +436,7 @@ def majid4(X):
 
 # X = [[el] for el in X]
 
-num_cores = multiprocessing.cpu_count()
+num_cores = 8
 sent5 = Parallel(n_jobs=num_cores)(delayed(majid4)(i) for i in sent4)
 del sent4
 gc.collect()
@@ -447,7 +447,7 @@ print("Done All")
 #Save
 ##########
 
-model1 = Word2Vec(sent5, min_count=5, size=300, workers=multiprocessing.cpu_count(), window=1, sg=0)
+model1 = Word2Vec(sent5, min_count=5, size=300, workers=8, window=1, sg=0)
 print('Done Training')
 
 SizeOfVocab = model1.wv.vocab
@@ -455,7 +455,7 @@ print('Size of Vocabulary=', len(SizeOfVocab))
 print('Done making the Vocabulary')
 
 #####
-model2 = Word2Vec(sent5, min_count=5, size=300, workers=multiprocessing.cpu_count(), window=1, sg=1)
+model2 = Word2Vec(sent5, min_count=5, size=300, workers=8, window=1, sg=1)
 print('Done Training')
 
 SizeOfVocab = model2.wv.vocab

@@ -67,7 +67,7 @@ X = [[el] for el in X]
 from joblib import Parallel, delayed
 import multiprocessing
 
-num_cores = multiprocessing.cpu_count()
+num_cores = 8
 sentences = Parallel(n_jobs=num_cores)(delayed(majid)(i) for i in X)
 '''
 #############
@@ -89,7 +89,7 @@ import multiprocessing
 
 #X = [[el] for el in X]
 
-num_cores = multiprocessing.cpu_count()
+num_cores = 8
 sent2 = Parallel(n_jobs=num_cores)(delayed(majid2)(i) for i in sentences)
 '''
 #######################
@@ -118,7 +118,7 @@ import multiprocessing
 
 # X = [[el] for el in X]
 
-num_cores = multiprocessing.cpu_count()
+num_cores = 8
 sent2 = Parallel(n_jobs=num_cores)(delayed(majid2)(i) for i in sentences)
 ###############################
 
@@ -129,7 +129,7 @@ Making Vocabulary and Training the Model
 """""
 #########
 
-model1 = Word2Vec(sent2, min_count=5, size=300, workers=multiprocessing.cpu_count(), window=1, sg=0)
+model1 = Word2Vec(sent2, min_count=5, size=300, workers=8, window=1, sg=0)
 print('Done Training')
 
 SizeOfVocab = model1.wv.vocab
@@ -137,7 +137,7 @@ print('Size of Vocabulary=', len(SizeOfVocab))
 print('Done making the Vocabulary')
 
 #####
-model2 = Word2Vec(sent2, min_count=5, size=300, workers=multiprocessing.cpu_count(), window=1, sg=1)
+model2 = Word2Vec(sent2, min_count=5, size=300, workers=8, window=1, sg=1)
 print('Done Training')
 
 SizeOfVocab = model2.wv.vocab

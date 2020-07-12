@@ -64,7 +64,7 @@ X = [[el] for el in X]
 from joblib import Parallel, delayed
 import multiprocessing
 
-del News
+
 del text
 gc.collect()
 num_cores = 8
