@@ -64,7 +64,10 @@ X = [[el] for el in X]
 from joblib import Parallel, delayed
 import multiprocessing
 
-num_cores = multiprocessing.cpu_count()
+del News
+del text
+gc.collect()
+num_cores = 8
 sentences = Parallel(n_jobs=num_cores)(delayed(majid)(i) for i in X)
 
 
@@ -77,6 +80,12 @@ SizeOfVocab = model1.wv.vocab
 print('Size of Vocabulary=', len(SizeOfVocab))
 print('Done making the Vocabulary')
 
+model1.wv.save_word2vec_format('~/MasterThesis/Model/Wiki-W-CBOW-Basis.bin.gz', binary=True)
+model1.wv.save_word2vec_format('~/MasterThesis/Model/Wiki-W-CBOW-Basis.txt', binary=False)
+model1.save('~/MasterThesis/Model/Wiki-W-CBOW-Basis.bin')
+print('Done Saving Model1')
+
+
 #####
 model2 = Word2Vec(sentences, min_count=5, size=300, workers=multiprocessing.cpu_count(), window=1, sg=1)
 print('Done Training')
@@ -84,6 +93,12 @@ print('Done Training')
 SizeOfVocab = model2.wv.vocab
 print('Size of Vocabulary=', len(SizeOfVocab))
 print('Done making the Vocabulary')
+
+#####
+model2.wv.save_word2vec_format('~/MasterThesis/Model/Wiki-W-Skip-Basis.gz', binary=True)
+model2.wv.save_word2vec_format('~/MasterThesis/Model/Wiki-W-Skip-Basis.txt', binary=False)
+model2.save('~/MasterThesis/Model/Wiki-W-Skip-Basis.bin')
+print('Done Saving Model2')
 
 
 """"
@@ -93,15 +108,8 @@ Saving the embeddings and the model
 
 from gensim.models import Word2Vec, KeyedVectors
 
-model1.wv.save_word2vec_format('~/MasterThesis/Model/Wiki-W-CBOW-Basis.bin.gz', binary=True)
-model1.wv.save_word2vec_format('~/MasterThesis/Model/Wiki-W-CBOW-Basis.txt', binary=False)
-model1.save('~/MasterThesis/Model/Wiki-W-CBOW-Basis.bin')
-print('Done Saving Model1')
-#####
-model2.wv.save_word2vec_format('~/MasterThesis/Model/Wiki-W-Skip-Basis.gz', binary=True)
-model2.wv.save_word2vec_format('~/MasterThesis/Model/Wiki-W-Skip-Basis.txt', binary=False)
-model2.save('~/MasterThesis/Model/Wiki-W-Skip-Basis.bin')
-print('Done Saving Model2')
+
+
 
 # model.save('model2.bin')
 
